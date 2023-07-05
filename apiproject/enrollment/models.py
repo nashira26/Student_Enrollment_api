@@ -14,13 +14,7 @@ class Student(models.Model):
 
     def __str__(self):
         return self.name
-    
-    # default status on a new student creation is set to the initial step by overriding save method
-    def save(self, *args, **kwargs):
-        if not self.status:
-            initial_status = FunnelStatus.objects.first()
-            self.status = initial_status
-        super().save(*args, **kwargs)
+
 
 class Log(models.Model):
     student_name = models.ForeignKey(Student, on_delete=models.CASCADE)
