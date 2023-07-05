@@ -25,6 +25,8 @@ urlpatterns = [
     path('funnelstatus/<int:id>/', views.get_funnel_status, name="get_funnel_status"),
     path('funnelstatus/<int:id>/update/', views.update_funnel_status, name="update_funnel_status"),
     path('funnelstatus/<int:id>/delete/', views.delete_funnel_status, name="delete_funnel_status"),
-    
+    path('student/create/', views.create_student, name="create_student"),
+    path('student/<int:id>/', views.get_student, name="get_student"),
+    path('student/<int:id>/update/', views.update_student, name="update_student"),
 ]
 

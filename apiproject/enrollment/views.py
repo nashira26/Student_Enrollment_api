@@ -71,3 +71,58 @@ def delete_funnel_status(request, id):
     status.delete()
     return Response(status=204)
 
+#api endpoint for creating a new student
+@api_view(['POST'])
+def create_student(request):
+
+    #get new student data
+    #if valid, save and return response with status
+    #else return error message
+    serializer = StudentSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+
+        #create log entry for new student creation
+        student = serializer.instance
+        log_entry = Log(student, name=student, status_before=None, status_after=student.status)
+        log_entry.save()
+        
+        return Response(serializer.data, status=201)
+    return Response(serializer.errors, status=400)
+
+#api endpoint for getting student
+@api_view(['GET'])
+def get_student(request, id):
+
+    #get the student object if exists
+    try:
+        student = Student.objects.get(pk=id)
+    except Student.DoesNotExist:
+        return Response(status=404)
+    serializer = StudentSerializer(student)
+    return Response(serializer.data, status=201)
+    
+
+#api endpoint for updating existing student
+@api_view(['PUT'])
+def update_student(request, id):
+
+    #get existing student object
+    #deserialize request data
+    #update student object with deserialized data
+    try:
+        student = Student.objects.get(id=id)
+    except Student.DoesNotExist:
+        return Response(status=404)
+    
+    serializer = StudentSerializer(student, data=request.data)
+    if serializer.is_valid():
+        updated_student = serializer.save()
+
+        #create a log entry for the update
+        log_entry = Log(student_name=updated_student, status_before=student.status, status_after=updated_student.status)
+        log_entry.save()
+        
+        return Response(serializer.data)
+    return Response(serializer.errors, status=400)
+
