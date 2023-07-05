@@ -1,3 +1,6 @@
 from django.contrib import admin
+from .models import FunnelStatus, Student, Log
 
-# Register your models here.
+admin.site.register(FunnelStatus)
+admin.site.register(Student)
+admin.site.register(Log)
