@@ -21,6 +21,10 @@ from enrollment import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('funnelstatus/', views.get_funnel_status_list, name="get_funnel_status_list"),
+    path('funnelstatus/create/', views.create_funnel_status, name="create_funnel_status"),
+    path('funnelstatus/<int:id>/', views.get_funnel_status, name="get_funnel_status"),
+    path('funnelstatus/<int:id>/update/', views.update_funnel_status, name="update_funnel_status"),
+    path('funnelstatus/<int:id>/delete/', views.delete_funnel_status, name="delete_funnel_status"),
     
 ]
 
