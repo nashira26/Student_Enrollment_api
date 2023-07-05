@@ -1,6 +1,7 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.http import JsonResponse
+from django.core.paginator import Paginator
 from .models import FunnelStatus, Student, Log
 from .serializers import FunnelStatusSerializer, StudentSerializer, LogSerializer
 
@@ -115,14 +116,27 @@ def update_student(request, id):
     except Student.DoesNotExist:
         return Response(status=404)
     
+    status_before=student.status
     serializer = StudentSerializer(student, data=request.data)
     if serializer.is_valid():
         updated_student = serializer.save()
 
         #create a log entry for the update
-        log_entry = Log(student_name=updated_student, status_before=student.status, status_after=updated_student.status)
+        log_entry = Log(student_name=updated_student, status_before=status_before, status_after=updated_student.status)
         log_entry.save()
         
         return Response(serializer.data)
     return Response(serializer.errors, status=400)
 
+#api endpoint for getting latest 50 logs
+@api_view(['GET'])
+def get_latest_logs(request):
+
+    #get latest 50 logs
+    logs = Log.objects.all().order_by('-timestamp')[:50]
+    # paginate logs, 25 logs per page
+    paginator = Paginator(logs, 25)
+    page_no = request.query_params.get('page', 1)
+    page = paginator.get_page(page_no)
+    serializer = LogSerializer(page, many=True)
+    return Response(serializer.data)

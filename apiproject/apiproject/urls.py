@@ -28,5 +28,6 @@ urlpatterns = [
     path('student/create/', views.create_student, name="create_student"),
     path('student/<int:id>/', views.get_student, name="get_student"),
     path('student/<int:id>/update/', views.update_student, name="update_student"),
+    path('logs/', views.get_latest_logs, name="get_latest_logs")
 ]
 
