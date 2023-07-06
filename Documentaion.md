@@ -1,11 +1,14 @@
 # Enrollment Funnel API Documentation
 
 ## 1. Get list of Funnel statuses
-- Endpoint : 'funnelstatus/'
+- Endpoint : GET '/funnelstatus_list/'
 - Method : GET
 - Description : Retrieve the list of all funnel statuses.
 
-**Response body:**
+### Example:
+**Response body**
+- Status code: HTTP 200 OK
+- Content-Type: application/json
 ````json
 {
     "statuses": [
@@ -30,16 +33,38 @@
 ````
 
 ## 2. Create new Funnel status
-- Endpoint : 'funnelstatus/create/'
+- Endpoint : POST '/funnelstatus/'
 - Method : POST
 - Description : Create a new funnel status.
 
+### Example
+**Request body:**
+- POST '/funnelstatus/'
+- Content-Type: application/json
+````json
+{
+    "name": "Application Accepted",
+}
+````
+**Response body:**
+- Status code: HTTP 200 OK
+- Content-Type: application/json
+````json
+{
+    "id": 2,
+    "name": "Application Accepted",
+}
+````
+
 ## 3. Get a Funnel status
-- Endpoint : 'funnelstatus/<status_id>/'
+- Endpoint : GET '/funnelstatus/<status_id>/'
 - Method : GET
 - Description : Retrieve an existing funnel status.
 
+### Example
 **Response body:**
+- Status code: HTTP 200 OK
+- Content-Type: application/json
 ````json
 {
     "id": 1,
@@ -48,11 +73,22 @@
 ````
 
 ## 4. Update a Funnel status
-- Endpoint : 'funnelstatus/<status_id>/update/'
+- Endpoint : PUT '/funnelstatus/<status_id>/'
 - Method : PUT
 - Description : Update an existing funnel status.
 
+### Example
+**Request body:**
+- PUT '/funnelstatus/1/'
+- Content-Type: application/json
+````json
+{
+    "name": "Application Accepted",
+}
+````
 **Response body:**
+- Status code: HTTP 200 OK
+- Content-Type: application/json
 ````json
 {
     "id": 1,
@@ -61,26 +97,51 @@
 ````
 
 ## 5. Delete a Funnel status
-- Endpoint : 'funnelstatus/<status_id>/delete/'
+- Endpoint : DELETE '/funnelstatus/<status_id>/'
 - Method : DELETE
 - Description : Delete an existing funnel status.
 
 **Response body:**
+- Status code: HTTP 200 OK
+- Content-Type: application/json
 ````json
 {}
 ````
 
 ## 6. Create new Student
-- Endpoint : 'student/create/'
+- Endpoint : POST '/student/'
 - Method : POST
 - Description : Create a new student.
 
+### Example
+**Request body:**
+- POST '/student/'
+- Content-Type: application/json
+````json
+{
+    "name": "Harry",
+}
+````
+**Response body:**
+- Status code: HTTP 200 OK
+- Content-Type: application/json
+````json
+{
+    "id": 1,
+    "name": "Harry",
+    "status": "Applied"
+}
+````
+
 ## 7. Get a Student
-- Endpoint : 'student/<student_id>/'
+- Endpoint : GET '/student/<student_id>/'
 - Method : GET
 - Description : Retrieve an existing student.
 
+### Example
 **Response body:**
+- Status code: HTTP 200 OK
+- Content-Type: application/json
 ````json
 {
     "id": 1,
@@ -90,21 +151,39 @@
 ````
 
 ## 8. Update a Student
-- Endpoint : 'student/<student_id>/update/'
+- Endpoint : PUT '/student/<student_id>/'
 - Method : PUT
-- Description : Update an existing student.
+- Description : Update an existing student's details.
 
-## 9. Delete a Student
-- Endpoint : 'student/<student_id>/delete/'
-- Method : DELETE
-- Description : Delete an existing student.
+### Example
+**Request body:**
+- PUT '/student/1/'
+- Content-Type: application/json
+````json
+{
+    "name" : "Henry",
+    "status": "Application Accepted"
+}
+````
+**Response body:**
+- Status code: HTTP 200 OK
+- Content-Type: application/json
+````json
+{
+    "id": 1,
+    "name": "Henry",
+    "status": "Application Accepted"
+}
+````
 
-## 10. Retrieve 50 latest logs
-- Endpoint : 'logs/'
+## 9. Retrieve 50 latest logs
+- Endpoint : GET '/logs/'
 - Method : GET
 - Description : Retrieve 50 latest logs with pagination.
 
 **Response body:**
+- Status code: HTTP 200 OK
+- Content-Type: application/json
 ````json
 [
     {
@@ -148,25 +227,25 @@
 
 If an error occurs, API will respond with an error message in JSON format and will contain following fields.
 
-**Example error responses**
-
-### Example 1:
+**Example 1:**
 Using the wrong request method.
-```json
-HTTP 405 Method Not Allowed
-Content-Type: application/json
 
+- Status code: HTTP 405 Method Not Allowed
+- Content-Type: application/json
+
+### Example
+```json
 {
     "detail": "Method \"GET\" not allowed."
 }
 ```
 
-### Example 2:
+**Example 2:**
 Requested data is not available in the database.
-```json
-HTTP 404 Not Found
-Content-Type: application/json
 
+- Status code: HTTP 404 Not Found
+- Content-Type: application/json
+```json
 {
     "error": "Resource not found", 
     "message" : "The requested resource does not exist."
@@ -174,15 +253,16 @@ Content-Type: application/json
 
 ```
 
-### Example 4:
+**Example 3:**
 Malformed syntax or invalid parameters.
-```json
-HTTP 400 Bad request
-Content-Type: application/json
 
+- Status code: HTTP 400 Bad request
+- Content-Type: application/json
+
+### Example
+```json
 {
     "status": [
         "Object with name=Declined does not exist."
-    ]
-    
+    ]   
 }
