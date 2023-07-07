@@ -7,7 +7,7 @@ from .serializers import FunnelStatusSerializer, StudentSerializer, LogSerialize
 
 #api endpoint for getting list of all the funnel status
 @api_view(['GET'])
-def get_funnel_status_list(request):
+def get_funnel_status_all(request):
 
     #get all status
     #serialize them
@@ -29,8 +29,9 @@ def create_funnel_status(request):
         return JsonResponse(serializer.data, status=201)
     return JsonResponse(serializer.errors, status=400)
 
-@api_view(['GET', 'PUT', 'DELETE'])
-def funnel_status(request, id):
+#api endpoint for getting funnel status
+@api_view(['GET'])
+def get_funnel_status(request, id):
 
     #get the status object if exists
     try:
@@ -41,22 +42,39 @@ def funnel_status(request, id):
                  "message" : "The requested Funnel Status does not exist."}, 
                 status=404)
     serializer = FunnelStatusSerializer(status)
+    return JsonResponse(serializer.data, status=201)
 
-    #api endpoint for getting funnel status
-    if request.method == "GET":
-        return JsonResponse(serializer.data, status=201)
+#api endpoint for updating existing funnel status
+@api_view(['PUT'])
+def update_funnel_status(request, id):  
     
-    #api endpoint for updating existing funnel status
-    elif request.method == "PUT":
-        if serializer.is_valid():
-            serializer.save()
-            return JsonResponse(serializer.data, status=201)
-        return JsonResponse(serializer.errors, status=400)
+    try:
+        status = FunnelStatus.objects.get(pk=id)
+    except FunnelStatus.DoesNotExist:
+        return JsonResponse(
+                {"error": "Resource not found", 
+                 "message" : "The requested Funnel Status does not exist."}, 
+                status=404)
+    serializer = FunnelStatusSerializer(status)
+    
+    if serializer.is_valid():
+        serializer.save()
+        return JsonResponse(serializer.data, status=201)
+    return JsonResponse(serializer.errors, status=400)
 
-    #api endpoint for deleting an existing funnel status
-    elif request.method == "DELETE":
-        status.delete()
-        return JsonResponse({}, status=204)
+#api endpoint for deleting an existing funnel status
+@api_view(['DELETE'])
+def delete_funnel_status(request, id):
+    try:
+        status = FunnelStatus.objects.get(pk=id)
+    except FunnelStatus.DoesNotExist:
+        return JsonResponse(
+                {"error": "Resource not found", 
+                 "message" : "The requested Funnel Status does not exist."}, 
+                status=404)
+    
+    status.delete()
+    return JsonResponse({}, status=204)
 
 #api endpoint for creating a new student
 @api_view(['POST'])
@@ -71,12 +89,12 @@ def create_student(request):
     serializer = StudentSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
-
         return JsonResponse(serializer.data, status=201)
     return JsonResponse(serializer.errors, status=400)
 
-@api_view(['GET', 'PUT'])
-def student(request, id):
+#api endpoint for getting student
+@api_view(['GET'])
+def get_student(request, id):
 
     #get the student object if exists
     try:
@@ -87,33 +105,42 @@ def student(request, id):
                  "message" : "The requested student does not exist."}, 
                 status=404 )
     
-    #api endpoint for getting student
-    if request.method == "GET":
-        serializer = StudentSerializer(student)
-        return JsonResponse(serializer.data, status=201)
+    serializer = StudentSerializer(student)
+    return JsonResponse(serializer.data, status=201)
     
-    #api endpoint for updating student
-    elif request.method == "PUT":
-        status_before=student.status
+#api endpoint for updating student
+@api_view(['PUT'])
+def update_student(request, id):
+    
+    #get the student object if exists
+    try:
+        student = Student.objects.get(pk=id)
+    except Student.DoesNotExist:
+        return JsonResponse(
+                {"error": "Resource not found", 
+                 "message" : "The requested student does not exist."}, 
+                status=404 )
+    
+    status_before=student.status
 
-        serializer = StudentSerializer(student, data=request.data)
-        if serializer.is_valid():
-            validated_data = serializer.validated_data
+    serializer = StudentSerializer(student, data=request.data)
+    if serializer.is_valid():
+        validated_data = serializer.validated_data
 
-            new_status = validated_data.get('status')
-            new_name = validated_data.get('name')
+        new_status = validated_data.get('status')
+        new_name = validated_data.get('name')
 
-            # update in the student object
-            student.status = new_status
-            student.name = new_name
-            student.save()
+        # update in the student object
+        student.status = new_status
+        student.name = new_name
+        student.save()
 
-            #create a log entry for the update
-            log_entry = Log(student_name=student, status_before=status_before, status_after=student.status)
-            log_entry.save()
+        #create a log entry for the update
+        log_entry = Log(student_name=student, status_before=status_before, status_after=student.status)
+        log_entry.save()
         
-            return JsonResponse(serializer.data, safe=False)
-        return JsonResponse(serializer.errors, status=400)
+        return JsonResponse(serializer.data, safe=False)
+    return JsonResponse(serializer.errors, status=400)
 
 #api endpoint for getting latest 50 logs
 @api_view(['GET'])

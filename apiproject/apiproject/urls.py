@@ -20,11 +20,14 @@ from enrollment import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('funnelstatus_list/', views.get_funnel_status_list, name="get_funnel_status_list"),
+    path('funnelstatus/all/', views.get_funnel_status_all, name="get_funnel_status_all"),
     path('funnelstatus/', views.create_funnel_status, name="create_funnel_status"),
-    path('funnelstatus/<int:id>/', views.funnel_status, name="funnel_status"),
+    path('funnelstatus/<int:id>/', views.get_funnel_status, name="get_funnel_status"),
+    path('funnelstatus/<int:id>/', views.update_funnel_status, name="update_funnel_status"),
+    path('funnelstatus/<int:id>/', views.delete_funnel_status, name="delete_funnel_status"),
     path('student/', views.create_student, name="create_student"),
-    path('student/<int:id>/', views.student, name="student"),
+    path('student/<int:id>/', views.get_student, name="get_student"),
+    path('student/<int:id>/', views.update_student, name="update_student"),
     path('logs/', views.get_latest_logs, name="get_latest_logs")
 ]
 
